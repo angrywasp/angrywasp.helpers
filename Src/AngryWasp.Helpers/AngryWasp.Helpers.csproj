@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+<Import Project="../AngryWasp.Helpers.targets" />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>AngryWasp.Helpers</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+</Project>
