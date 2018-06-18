@@ -12,10 +12,14 @@ namespace AngryWasp.Helpers
 
         public delegate bool ConditionalNodeWalker(XElement node);
 
-        public static XDocument CreateDocument(string rootNode, Dictionary<string, object> namespaces = null, Dictionary<string, object> attributes = null)
+        public static XDocument CreateDocument(string rootNode, Dictionary<string, object> namespaces = null, Dictionary<string, object> attributes = null, string[] headerLines = null)
         {
             XDocument doc = new XDocument(new XDeclaration("1.0", "UTF-8", null));
-            doc.Add(new XComment("Created by Angry Wasp's Sandbox Engine"));
+            
+            if (headerLines != null)
+                foreach (string h in headerLines)
+                    doc.Add(new XComment(h));
+
             doc.Add(new XElement(rootNode));
 
             if (namespaces != null)
