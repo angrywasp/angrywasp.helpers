@@ -99,7 +99,7 @@ namespace AngryWasp.Helpers
         /// <param name="s">The string to check</param>
         /// <param name="onlineCheck">if true, performs secondary checking for the existence of the address</param>
         /// <returns>true if valid, else false</returns>
-        public static bool IsValidEmail(string s, bool onlineCheck)
+        public static bool IsValidEmail(string s, bool onlineCheck = false)
         {
             if (string.IsNullOrEmpty(s))
                 return false;
@@ -198,10 +198,8 @@ namespace AngryWasp.Helpers
 
             string str = string.Empty;
 
-            Random r = new Random();
-
             for (int i = 0; i < length; i++)
-                str += chars[r.Next(0, chars.Length)];
+                str += chars[MathHelper.Random.NextInt(0, chars.Length)];
 
             return str;
         }
