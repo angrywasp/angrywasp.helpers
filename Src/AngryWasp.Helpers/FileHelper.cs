@@ -8,15 +8,8 @@ namespace AngryWasp.Helpers
 {
     public class FileHelper
     {
-        /// <summary>
-        /// takes a virtual file path and returns a virtual file path with the uniquely named path
-        /// </summary>
-        /// <param name="virtualPath"></param>
-        /// <returns></returns>
         public static string RenameDuplicateFile(string p)
         {
-            //todo: changed to accept full file path. check p to make sure it is absolute
-            Debugger.Break();
             if (!File.Exists(p))
                 return p;
 
@@ -24,49 +17,34 @@ namespace AngryWasp.Helpers
             string dirName = Path.GetDirectoryName(p);
             string ext = Path.GetExtension(p);
 
-            string format = Path.Combine(dirName, fileName) + "_{0}" + ext;
-
             for (int n = 0; n < 1000; n++)
             {
-                string v = n.ToString();
-                if (n < 10)
-                    v = "0" + v;
-                if (n < 100)
-                    v = "0" + v;
+                string v = string.Format("{0:000}", n);
 
-                string fn = string.Format(format, v);
+                string fn = $"{Path.Combine(dirName, fileName)}_{v}{ext}";
 
                 if (!File.Exists(fn))
                     return Path.Combine(dirName, Path.GetFileName(fn));
             }
 
-            return p;
+            throw new IOException("Could not rename file after 1000 attempts");
         }
 
         public static string RenameDuplicateFolder(string p)
         {
-            //todo: changed to accept full file path. check p to make sure it is absolute
-            Debugger.Break();
             if (!Directory.Exists(p))
                 return p;
 
-            string format = p + "_{0}";
-
             for (int n = 0; n < 1000; n++)
             {
-                string v = n.ToString();
-                if (n < 10)
-                    v = "0" + v;
-                if (n < 100)
-                    v = "0" + v;
+                string v = string.Format("{0:000}", n);
+                string dn = $"{p}_{v}";
 
-                string fn = string.Format(format, v);
-
-                if (!Directory.Exists(p))
-                    return fn;
+                if (!Directory.Exists(dn))
+                    return dn;
             }
 
-            return p;
+            throw new IOException("Could not rename directory after 1000 attempts");
         }
 
         /// <summary>

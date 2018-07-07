@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AngryWasp.Helpers
@@ -151,6 +152,17 @@ namespace AngryWasp.Helpers
         }
 
         /// <summary>
+        /// Converts a Unix timestamp to a DateTime structure
+        /// </summary>
+        /// <param name="ts">The timestamp to convert</param>
+        /// <returns>A DateTime representing the timestamp</returns>
+        public static DateTime UnixTimeStampToDateTime(ulong ts)
+        {
+            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return dt.AddSeconds(ts).ToLocalTime();
+        }
+
+        /// <summary>
         /// Converts all the tab characters \t in a string to spaces
         /// </summary>
         /// <param name="s">the string to convert</param>
@@ -202,6 +214,28 @@ namespace AngryWasp.Helpers
                 str += chars[MathHelper.Random.NextInt(0, chars.Length)];
 
             return str;
+        }
+
+        public static string GenerateRandomHexString(int length, bool upperCase = false)
+        {
+            char[] chars = $"0123456789{(upperCase ? "ABCDEF" : "abcdef")}".ToCharArray();
+
+            string str = string.Empty;
+
+            for (int i = 0; i < length; i++)
+                str += chars[MathHelper.Random.NextInt(0, chars.Length)];
+
+            return str;
+        }
+
+        public static string EncodeBase64(string t)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(t));
+        }
+
+        public static string DecodeBase64(string t)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(t));
         }
         
         public static string NormalizeFilePath(string s)
