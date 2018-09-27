@@ -1,6 +1,6 @@
-namespace Fusion.Backend.Encryption
+namespace AngryWasp.Helpers
 {
-        public class MersenneTwister
+    public class MersenneTwister
     {
         private const int N = 624;
         private const int M = 397;
