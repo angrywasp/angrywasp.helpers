@@ -212,8 +212,8 @@ namespace AngryWasp.Helpers
 
             public static uint GenerateRandomSeed()
             {
-                uint a = (uint)(new Guid().GetHashCode());
-                uint b = (uint)(new Guid().GetHashCode());
+                uint a = (uint)(Math.Abs(Guid.NewGuid().GetHashCode()));
+                uint b = (uint)(Math.Abs(Guid.NewGuid().GetHashCode()));
 
                 return a + b;
             }
