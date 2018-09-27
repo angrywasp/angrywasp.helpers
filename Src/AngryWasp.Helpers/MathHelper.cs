@@ -208,7 +208,20 @@ namespace AngryWasp.Helpers
         /// </summary>
         public static class Random
         {
-            private static System.Random r = new System.Random();
+            private static MersenneTwister r = new MersenneTwister(GenerateRandomSeed());
+
+            public static uint GenerateRandomSeed()
+            {
+                uint a = (uint)(new Guid().GetHashCode());
+                uint b = (uint)(new Guid().GetHashCode());
+
+                return a + b;
+            }
+
+            public static void Reset()
+            {
+                r = new MersenneTwister(GenerateRandomSeed());
+            }
 
             /// <summary>
             /// Generates a random float value between min and max values

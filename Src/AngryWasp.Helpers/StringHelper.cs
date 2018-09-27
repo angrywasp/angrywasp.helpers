@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -228,19 +230,138 @@ namespace AngryWasp.Helpers
             return str;
         }
 
-        public static string EncodeBase64(string t)
-        {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(t));
-        }
-
-        public static string DecodeBase64(string t)
-        {
-            return Encoding.UTF8.GetString(Convert.FromBase64String(t));
-        }
-        
         public static string NormalizeFilePath(string s)
         {
         	return s.Replace("\\", "/");
         }
+    }
+
+    public static class StringExtensions
+    {
+        #region String encryption
+
+        private const int Keysize = 128;
+        private const int DerivationIterations = 1000;
+
+        public static string Encrypt(this string plainText, string passPhrase)
+        {
+            var saltStringBytes = GenerateEntropy();
+            var ivStringBytes = GenerateEntropy();
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations))
+            {
+                var keyBytes = password.GetBytes(Keysize / 8);
+                using (var symmetricKey = new RijndaelManaged())
+                {
+                    symmetricKey.BlockSize = 128;
+                    symmetricKey.Mode = CipherMode.CBC;
+                    symmetricKey.Padding = PaddingMode.PKCS7;
+                    using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes))
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                            {
+                                cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
+                                cryptoStream.FlushFinalBlock();
+                                var cipherTextBytes = saltStringBytes;
+                                cipherTextBytes = cipherTextBytes.Concat(ivStringBytes).ToArray();
+                                cipherTextBytes = cipherTextBytes.Concat(memoryStream.ToArray()).ToArray();
+                                memoryStream.Close();
+                                cryptoStream.Close();
+                                return Convert.ToBase64String(cipherTextBytes);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static string Decrypt(this string cipherText, string passPhrase)
+        {
+            var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
+            var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(Keysize / 8).ToArray();
+            var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(Keysize / 8).Take(Keysize / 8).ToArray();
+            var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((Keysize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((Keysize / 8) * 2)).ToArray();
+
+            using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations))
+            {
+                var keyBytes = password.GetBytes(Keysize / 8);
+                using (var symmetricKey = new RijndaelManaged())
+                {
+                    symmetricKey.BlockSize = 128;
+                    symmetricKey.Mode = CipherMode.CBC;
+                    symmetricKey.Padding = PaddingMode.PKCS7;
+                    using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
+                    {
+                        using (var memoryStream = new MemoryStream(cipherTextBytes))
+                        {
+                            using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                            {
+                                var plainTextBytes = new byte[cipherTextBytes.Length];
+                                var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                                memoryStream.Close();
+                                cryptoStream.Close();
+                                return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static byte[] GenerateEntropy()
+        {
+            var randomBytes = new byte[16];
+            using (var rngCsp = new RNGCryptoServiceProvider())
+            {
+                rngCsp.GetBytes(randomBytes);
+            }
+            return randomBytes;
+        }
+
+        #endregion
+
+        #region Encode/Decode Base64
+
+        public static string EncodeBase64(this string t) => Convert.ToBase64String(Encoding.UTF8.GetBytes(t));
+
+        public static string DecodeBase64(this string t) => Encoding.UTF8.GetString(Convert.FromBase64String(t));
+
+        #endregion
+        
+        #region Encode/Decode a string to a hex representation
+
+        //example
+        // string s = "Hello World";
+        // string hex = s.ToHex();
+
+
+        public static byte[] FromHex(this string input)
+        {
+            byte[] raw = new byte[input.Length / 2];
+            for (int i = 0; i < raw.Length; i++)
+                raw[i] = Convert.ToByte(input.Substring(i * 2, 2), 16);
+            
+            return raw;
+        }
+
+        public static string ToHex(this string input)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(byte c in input)
+                sb.AppendFormat("{0:X2}", c);
+            return sb.ToString().Trim();
+        }
+
+        public static string ToHex(this byte[] input)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(byte c in input)
+                sb.AppendFormat("{0:X2}", c);
+            return sb.ToString().Trim();
+        }
+
+        #endregion
     }
 }
