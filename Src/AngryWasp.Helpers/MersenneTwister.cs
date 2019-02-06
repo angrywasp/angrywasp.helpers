@@ -41,7 +41,7 @@ namespace AngryWasp.Helpers
             get => seed;
         }
 
-        private uint GenerateUInt()
+        public uint GenerateUInt()
         {
             uint y;
 
