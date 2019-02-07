@@ -332,12 +332,36 @@ namespace AngryWasp.Helpers
         
         #region Encode/Decode a string to a hex representation
 
-        //example
-        // string s = "Hello World";
-        // string hex = s.ToHex();
+        /// <summary>
+        /// Converts a string of ASCII characters to a byte[]
+        /// </summary>
+        public static byte[] CharsToByte(this string input, int count = 0)
+        {
+            count = (count == 0) ? input.Length : count;
+            byte[] raw = new byte[count];
+            for (int i = 0; i < count; i++)
+                raw[i] = Convert.ToByte(input[i]);
+            
+            return raw;
+        }
 
+        /// <summary>
+        /// Converts a string of ASCII characters to an sbyte[]
+        /// </summary>
+        public static sbyte[] CharsToSByte(this string input, int count = 0)
+        {
+            count = (count == 0) ? input.Length : count;
+            sbyte[] raw = new sbyte[count];
+            for (int i = 0; i < count; i++)
+                raw[i] = Convert.ToSByte(input[i]);
+            
+            return raw;
+        }
 
-        public static byte[] FromHex(this string input)
+        /// <summary>
+        /// Converts a hex formatted string to a byte[]
+        /// </summary>
+        public static byte[] FromByteHex(this string input)
         {
             byte[] raw = new byte[input.Length / 2];
             for (int i = 0; i < raw.Length; i++)
@@ -346,19 +370,41 @@ namespace AngryWasp.Helpers
             return raw;
         }
 
-        public static string ToHex(this string input)
+        /// <summary>
+        /// Converts a hex formatted string to an sbyte[]
+        /// </summary>
+        public static sbyte[] FromSByteHex(this string input)
         {
-            StringBuilder sb = new StringBuilder();
-            foreach(byte c in input)
-                sb.AppendFormat("{0:X2}", c);
-            return sb.ToString().Trim();
+            sbyte[] raw = new sbyte[input.Length / 2];
+            for (int i = 0; i < raw.Length; i++)
+                raw[i] = Convert.ToSByte(input.Substring(i * 2, 2), 16);
+            
+            return raw;
         }
 
-        public static string ToHex(this byte[] input)
+        /// <summary>
+        /// Converts a byte[] to a hex formatted string
+        /// </summary>
+        public static string ToHex(this byte[] input, bool lowerCase = true, int count = 0)
         {
+            count = (count == 0) ? input.Length : count;
+            string format = lowerCase ? "{0:x2}" : "{0:X2}";
             StringBuilder sb = new StringBuilder();
-            foreach(byte c in input)
-                sb.AppendFormat("{0:X2}", c);
+            for (int i = 0; i < count; i++)
+                sb.AppendFormat(format, input[i]);
+            return sb.ToString().Trim();
+        }
+        
+        /// <summary>
+        /// Converts an sbyte[] to a hex formatted string
+        /// </summary>
+        public static string ToHex(this sbyte[] input, bool lowerCase = true, int count = 0)
+        {
+            count = (count == 0) ? input.Length : count;
+            string format = lowerCase ? "{0:x2}" : "{0:X2}";
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < count; i++)
+                sb.AppendFormat(format, input[i]);
             return sb.ToString().Trim();
         }
 
