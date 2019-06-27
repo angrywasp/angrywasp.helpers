@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nerva.Bots.Helpers
+namespace AngryWasp.Helpers
 {
     public class PasswordPrompt
     {

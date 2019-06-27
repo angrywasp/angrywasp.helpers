@@ -1,3 +1,6 @@
+using System;
+using System.Runtime.InteropServices;
+
 namespace AngryWasp.Helpers
 {
     public class MersenneTwister
@@ -104,5 +107,36 @@ namespace AngryWasp.Helpers
         public double NextDouble() => (double)this.GenerateUInt() / uint.MaxValue;
 
         public ulong NextULong() => (ulong)(NextDouble() * 1000000000000.0d);
+    }
+
+    public class XoShiRo256
+    {
+        private ulong[] state = null;
+
+        public XoShiRo256(ulong[] state)
+        {
+            if (state.Length != 4)
+                throw new InvalidOperationException("State must contain 4 elements");
+                
+            this.state = state;
+        }
+
+        private ulong Rotl64(ulong x, int k) => (x << k) | (x >> (64 - k));
+
+        public ulong NextULong()
+        {
+            ulong result = Rotl64(state[1] * 5, 7) * 9;
+            ulong t = state[1] << 17;
+
+            state[2] ^= state[0];
+            state[3] ^= state[1];
+            state[1] ^= state[2];
+            state[0] ^= state[3];
+
+            state[2] ^= t;
+            state[3] = Rotl64(state[3], 45);
+
+            return result;
+        }
     }
 }
