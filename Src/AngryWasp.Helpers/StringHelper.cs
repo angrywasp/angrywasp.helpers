@@ -154,17 +154,6 @@ namespace AngryWasp.Helpers
         }
 
         /// <summary>
-        /// Converts a Unix timestamp to a DateTime structure
-        /// </summary>
-        /// <param name="ts">The timestamp to convert</param>
-        /// <returns>A DateTime representing the timestamp</returns>
-        public static DateTime UnixTimeStampToDateTime(ulong ts)
-        {
-            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            return dt.AddSeconds(ts).ToLocalTime();
-        }
-
-        /// <summary>
         /// Converts all the tab characters \t in a string to spaces
         /// </summary>
         /// <param name="s">the string to convert</param>
