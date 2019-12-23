@@ -234,6 +234,29 @@ namespace AngryWasp.Helpers
                 return (float)((max - min) * r.NextDouble() + min);
             }
 
+
+            /// <summary>
+            /// Generates a random double value in the range 0.0 - 1.0
+            /// </summary>
+            /// <param name="min">the minimum value for the generated number</param>
+            /// <param name="max">the maximum value for the generated number</param>
+            /// <returns>the generated float</returns>
+            public static double NextDouble()
+            {
+                return r.NextDouble();
+            }
+
+            /// <summary>
+            /// Generates a random double value between min and max values
+            /// </summary>
+            /// <param name="min">the minimum value for the generated number</param>
+            /// <param name="max">the maximum value for the generated number</param>
+            /// <returns>the generated float</returns>
+            public static double NextDouble(double min, double max)
+            {
+                return (max - min) * r.NextDouble() + min;
+            }
+
             /// <summary>
             /// generate a random byte in the range 0 - 255
             /// </summary>
