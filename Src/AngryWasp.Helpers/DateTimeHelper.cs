@@ -8,33 +8,23 @@ namespace AngryWasp.Helpers
         /// Gets the current UTC time as a Unix timestamp
         /// </summary>
         /// <returns>The current UTC time as a Unix timestamp</returns>
-        public static ulong TimestampNow()
-        {
-            TimeSpan span = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc));
-            return (ulong)span.TotalSeconds;
-        }
+        public static ulong TimestampNow => 
+            (ulong)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
 
         /// <summary>
         /// Converts a Unix timestamp to a DateTime structure
         /// </summary>
-        /// <param name="ts">The timestamp to convert</param>
-        /// <returns>A DateTime representing the timestamp</returns>
-        public static DateTime UnixTimestampToDateTime(ulong ts)
-        {
-            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            return dt.AddSeconds(ts).ToLocalTime();
-        }
+        /// <param name="ts">The UTC timestamp to convert</param>
+        /// <returns>A UTC DateTime object representing the timestamp</returns>
+        public static DateTime UnixTimestampToDateTime(ulong utcTimestamp) =>
+            new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(utcTimestamp);
 
         /// <summary>
         /// Converts a DateTime to a Timestamp
         /// </summary>
-        /// <param name="dt">The DateTime to convert</param>
-        /// <returns>the unix timestamp representation of dt</returns>
-        /// <remarks>The DateTime object should be a UTC DateTime object</remarks>
-        public static ulong DateTimeToUnixTimestamp(DateTime dt)
-        {
-            TimeSpan span = (dt - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc));
-            return (ulong)span.TotalSeconds;
-        }
+        /// <param name="dt">The DateTime to convert. Automatically converted to UTC</param>
+        /// <returns>The UTC timestamp representation of dt</returns>
+        public static ulong DateTimeToUnixTimestamp(DateTime dt) =>
+            (ulong)(dt.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
     }
 }
