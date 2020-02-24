@@ -115,15 +115,11 @@ namespace AngryWasp.Helpers
             return element;
         }
 
-        public static XDocument LoadDocument(string path)
-        {
-            return XDocument.Load(path, LoadOptions.PreserveWhitespace);
-        }
+        public static XDocument LoadDocument(string path) =>
+            XDocument.Load(path, LoadOptions.PreserveWhitespace);
 
-        public static XDocument LoadText(string text)
-        {
-            return XDocument.Parse(text, LoadOptions.PreserveWhitespace);
-        }
+        public static XDocument LoadText(string text) =>
+            XDocument.Parse(text, LoadOptions.PreserveWhitespace);
 
         public static void Save(XDocument doc, string path)
         {
@@ -136,8 +132,6 @@ namespace AngryWasp.Helpers
             w.Flush();
             w.Close();
         }
-
-
 
         public static XElement GetNodeByName(XElement parent, string name)
         {
@@ -227,10 +221,8 @@ namespace AngryWasp.Helpers
             }
         }
 
-        public static bool AttributeExists(XElement parent, string attributeName)
-        {
-            return parent.Attribute(attributeName) != null;
-        }
+        public static bool AttributeExists(XElement parent, string attributeName) =>
+            parent.Attribute(attributeName) != null;
 
         public static string GetAttribute(XElement parent, string attributeName)
         {

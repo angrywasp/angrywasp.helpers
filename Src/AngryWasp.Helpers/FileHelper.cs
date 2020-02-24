@@ -98,23 +98,13 @@ namespace AngryWasp.Helpers
             return sb.ToString();
         }
 
-        private static string[] SplitPath(string path)
-        {
-            //convert to uri and get local name in case file path is in uri format (i.e. File:// prefix)
-            //user Path.GetFullPath to convert to a full file path
-            //trim seperator char
-            //finally split
-            return Path.GetFullPath(new Uri(path).LocalPath).Trim(Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar);
-        }
+        private static string[] SplitPath(string path) =>
+            Path.GetFullPath(new Uri(path).LocalPath).Trim(Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar);
 
         public static byte[] Compress(byte[] b)
         {
             MemoryStream ms = new MemoryStream();
             GZipStream sw = new GZipStream(ms, CompressionMode.Compress);
-
-            //get length of array to compress
-            //bit shift it into bytes
-            //and write it to the first 8 bytes (long) of the compressed stream
 
             sw.Write(b, 0, b.Length);
             sw.Close();
@@ -131,10 +121,8 @@ namespace AngryWasp.Helpers
 
             using (System.IO.FileStream sourceFile = System.IO.File.OpenRead(FileToCompress))
             {
-
                 using (System.IO.FileStream destinationFile = System.IO.File.Create(CompressedFile))
                 {
-
                     using (System.IO.Compression.GZipStream output = new System.IO.Compression.GZipStream(destinationFile,
                         System.IO.Compression.CompressionMode.Compress))
                     {
@@ -145,19 +133,17 @@ namespace AngryWasp.Helpers
                             output.Write(buffer, 0, ReadLength);
                             output.Flush();
                             bytesRead += ReadLength;
-                        } // Whend
+                        }
 
                         destinationFile.Flush();
-                    } // End Using System.IO.Compression.GZipStream output
+                    }
 
                     destinationFile.Close();
-                } // End Using System.IO.FileStream destinationFile 
+                }
 
-                // Close the files.
                 sourceFile.Close();
-            } // End Using System.IO.FileStream sourceFile
-
-        } // End Sub CompressFile
+            }
+        }
 
         /// <summary>
         /// Decompresses a byte[]
